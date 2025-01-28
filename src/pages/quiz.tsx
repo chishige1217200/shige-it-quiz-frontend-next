@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from "react";
 import "../styles/quiz.css";
-// import Image from "next/image";
+import Image from "next/image";
 import TypingAnimation from "@/components/ui/typing-animation";
 
 // クイズデータの型定義
@@ -49,47 +49,39 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {/* <header>
+      <header className="App-header">
         <Image
-          className="dark:invert"
+          className="App-logo"
           src="/quiz.png"
-          alt="Quiz Logo"
-          width={100}
-          height={100}
+          width={320}
+          height={320}
+          alt="logo"
         />
-        <h1>Quiz App</h1>
-      </header> */}
-      <main>
-        <div className="question-container">
-          <h2>Question {currentQuestionIndex + 1}:</h2>
-          <TypingAnimation>
-            {quizData[currentQuestionIndex].question}
-          </TypingAnimation>
-        </div>
-        <div className="answer-container">
-          <input
-            type="text"
-            value={answers[currentQuestionIndex]}
-            onChange={handleInputChange}
-            placeholder="Enter your answer"
-          />
-        </div>
-        <div className="button-container">
-          <button
-            onClick={handlePrevious}
-            disabled={currentQuestionIndex === 0}
-          >
-            Previous Question
-          </button>
-          <button onClick={handleSubmit}>Submit</button>
-          <button
-            onClick={handleNext}
-            disabled={currentQuestionIndex === quizData.length - 1}
-          >
-            Next Question
-          </button>
-        </div>
-      </main>
+      </header>
+
+      <div className="radius">
+        <TypingAnimation className="question-text" duration={200}>{"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"}</TypingAnimation>
+      </div>
+
+      <input
+        type="text"
+        className="input-area"
+        placeholder="回答を入力してください"
+      />
+
+      <div>
+        <button className="ans_button" type="button">
+          解　答
+        </button>
+      </div>
+      <div className="prob-change-btn">
+        <button className="previous-btn" type="button">
+          前の問題
+        </button>
+        <button className="next-btn" type="button">
+          次の問題
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,28 +1,133 @@
 .App {
-  font-family: Arial, sans-serif;
   text-align: center;
-  margin: 20px;
+  background-color: #282c34;
+  height: 100vh;
+  padding: 5%;
 }
 
-.icon {
-  width: 50px;
-  height: 50px;
+.App-logo {
+  width: 320px;
+  height: auto;
+  pointer-events: none;
 }
 
-.question-container {
-  margin: 20px 0;
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
 
-.answer-container {
-  margin: 10px 0;
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.radius {
+  width: 320px; /* 幅指定 */
+  height: 150px; /* 高さ指定 */
+  border: solid 2px #49505f; /* 枠線指定 */
+  background-color: #49505f; /* 背景色指定 */
+  border-radius: 10px; /* 角丸指定 */
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.question-text {
+  margin: 10px;
+  line-height: 20px;
+  font-size: medium;
+  color: white;
+  text-align: left;
+  word-wrap: break-word; /* または overflow-wrap: break-word; */
+  word-break: break-word;
+  white-space: normal; /* 折り返しを有効化 */
+}
+
+.input-area {
+  width: 320px; /* 幅指定 */
+  height: 30px; /* 高さ指定 */
+  border: solid 2px #49505f; /* 枠線指定 */
+  background-color: #49505f; /* 背景色指定 */
+  border-radius: 10px; /* 角丸指定 */
+  margin-top: 40px;
+  color: white;
+  text-align: center;
+}
+
+.input-area::placeholder {
+  text-align: center;
+}
+
+.ans_button {
+  width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background: linear-gradient(to right, #2c7aee, #2858a1);
+  color: white;
+  font-family: "Yu Gothic Medium";
+  font-size: 18px;
+  border: none;
+  box-shadow: none;
+}
+
+.prob-change-btn {
+  /* margin-top: 60px; */
+  display: flex;
+  justify-content: space-between; /* 左右にボタンを配置 */
+  align-items: center; /* 縦方向で中央揃え */
+  width: 100%; /* コンテナの幅を指定 */
+  text-align: center;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  /* width: 80vw; */
+}
+
+.previous-btn {
+  border-radius: 10px;
+  margin-left: 20px;
+  width: 100px;
+  height: 40px;
+  font-size: 16px;
+  background-color: white;
+}
+
+.next-btn {
+  border-radius: 10px;
+  margin-right: 20px;
+  width: 100px;
+  height: 40px;
+  font-size: 16px;
+  background-color: white;
 }
 
 button {
-  margin: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+button:hover {
+  scale: 1.1;
 }
 
 button:disabled {
   background-color: #ccc;
+  transform: none; /* disabled状態でhoverの影響を防ぐ */
+}
+
+button:disabled:hover {
+  transform: none; /* hoverのscaleを無効化 */
+  cursor: not-allowed; /* ユーザーにクリック不可であることを視覚的に示す */
 }
