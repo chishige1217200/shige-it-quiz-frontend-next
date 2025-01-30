@@ -1,7 +1,8 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import "../styles/quiz.css";
 import Image from "next/image";
 import TypingAnimation from "@/components/ui/typing-animation";
+import axios from "axios";
 
 // クイズデータの型定義
 interface Quiz {
@@ -17,6 +18,7 @@ const quizData: Quiz[] = [
 
 const App: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [question, setQuestion] = useState<string>("");
   const [answers, setAnswers] = useState<string[]>(
     Array(quizData.length).fill("")
   );
@@ -30,7 +32,7 @@ const App: React.FC = () => {
 
   // 次の質問に進む
   const handleNext = () => {
-    if (currentQuestionIndex < quizData.length - 1) {
+    if (currentQuestionIndex < 3000) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
@@ -47,6 +49,28 @@ const App: React.FC = () => {
     alert(`Your answer: ${answers[currentQuestionIndex]}`);
   };
 
+  const fetchQuizData = async (id: string) => {
+    try {
+      const response = await axios.get(
+        `https://shige-it-quiz-backend.vercel.app/get_quizdata?id=${currentQuestionIndex}`
+      );
+      const data = response.data;
+
+      console.log(data);
+
+      if (data.question) {
+        // マーカー情報を状態として保存
+        setQuestion( `Q${id}: ` + data.question);
+      }
+    } catch (error) {
+      console.error("Error fetching markers:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuizData(currentQuestionIndex.toString());
+  }, [currentQuestionIndex]);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -60,7 +84,9 @@ const App: React.FC = () => {
       </header>
 
       <div className="radius">
-        <TypingAnimation className="question-text" duration={200}>{"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"}</TypingAnimation>
+        <TypingAnimation className="question-text" duration={200}>
+          {question}
+        </TypingAnimation>
       </div>
 
       <input
@@ -70,15 +96,15 @@ const App: React.FC = () => {
       />
 
       <div>
-        <button className="ans_button" type="button">
+        <button className="ans_button" type="button" onClick={handleSubmit}>
           解　答
         </button>
       </div>
       <div className="prob-change-btn">
-        <button className="previous-btn" type="button">
+        <button className="previous-btn" type="button" onClick={handlePrevious}>
           前の問題
         </button>
-        <button className="next-btn" type="button">
+        <button className="next-btn" type="button" onClick={handleNext}>
           次の問題
         </button>
       </div>
