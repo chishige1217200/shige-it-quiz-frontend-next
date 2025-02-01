@@ -3,6 +3,7 @@ import "../styles/quiz.css";
 import Image from "next/image";
 import TypingAnimation from "@/components/ui/typing-animation";
 import axios from "axios";
+import { count } from "console";
 
 // クイズデータの型定義
 interface Quiz {
@@ -18,6 +19,7 @@ const quizData: Quiz[] = [
 
 const App: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [questionCount, setQuestionCount] = useState<number>(0);
   const [question, setQuestion] = useState<string>("");
   const [answers, setAnswers] = useState<string[]>(
     Array(quizData.length).fill("")
@@ -32,7 +34,7 @@ const App: React.FC = () => {
 
   // 次の質問に進む
   const handleNext = () => {
-    if (currentQuestionIndex < 3000) {
+    if (currentQuestionIndex < questionCount) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
@@ -49,6 +51,24 @@ const App: React.FC = () => {
     alert(`Your answer: ${answers[currentQuestionIndex]}`);
   };
 
+  const fetchQuizCount = async () => {
+    try {
+      const response = await axios.get(
+        `https://shige-it-quiz-backend.vercel.app/get_quizcount`
+      );
+      const data = response.data;
+
+      console.log(data);
+
+      if (data.count) {
+        // 問題数情報を状態として保存
+        setQuestionCount(data.count);
+      }
+    } catch (error) {
+      console.error("Error fetching questionCount:", error);
+    }
+  };
+
   const fetchQuizData = async (id: string) => {
     try {
       const response = await axios.get(
@@ -59,13 +79,19 @@ const App: React.FC = () => {
       console.log(data);
 
       if (data.question) {
-        // マーカー情報を状態として保存
-        setQuestion( `Q${id}: ` + data.question);
+        // 問題情報を状態として保存
+        setQuestion(`Q${id}: ` + data.question);
+      } else {
+        setQuestion(`Q${id}: 問題情報が存在しません。`);
       }
     } catch (error) {
-      console.error("Error fetching markers:", error);
+      console.error("Error fetching question:", error);
     }
   };
+
+  useEffect(() => {
+    fetchQuizCount();
+  }, []);
 
   useEffect(() => {
     fetchQuizData(currentQuestionIndex.toString());
