@@ -16,6 +16,7 @@ const App: React.FC = () => {
   // 次の問題に進む
   const handleNext = () => {
     if (currentQuestionIndex < questionCount - 1) {
+      setInputValue("");
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
@@ -23,13 +24,22 @@ const App: React.FC = () => {
   // 前の問題に戻る
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
+      setInputValue("");
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
 
   // 解答を送信する
   const handleSubmit = () => {
-    alert(`あなたの解答: ${inputValue}`);
+    if (answer === inputValue) {
+      alert("answerで正解!");
+      return;
+    }
+    if (alternativeAnswers?.includes(inputValue)) {
+      alert("alternativeAnswersで正解!");
+      return;
+    }
+    alert("不正解...");
   };
 
   // 問題数を取得する
@@ -40,7 +50,7 @@ const App: React.FC = () => {
       );
       const data = response.data;
 
-      console.log(data);
+      // console.log(data);
 
       if (data.count) {
         // 問題数情報を状態として保存
@@ -54,17 +64,20 @@ const App: React.FC = () => {
   // 問題情報を取得する
   const fetchQuizData = async (id: string) => {
     try {
+      setQuestion("");
       setAnswerEnabled(false);
       const response = await axios.get(
         `https://shige-it-quiz-backend.vercel.app/get_quizdata?id=${currentQuestionIndex}`
       );
       const data = response.data;
 
-      console.log(data);
+      // console.log(data);
 
       if (data.question) {
         // 問題情報を状態として保存
         setQuestion(`Q${id}: ` + data.question);
+        setAnswer(data.answer);
+        setAlternativeAnswers(data.alternativeAnswers);
         setAnswerEnabled(true);
       } else {
         setQuestion(`Q${id}: 問題情報が存在しません。`);
@@ -110,15 +123,30 @@ const App: React.FC = () => {
       />
 
       <div>
-        <button className="ans_button" type="button" onClick={handleSubmit} disabled={!answerEnabled}>
+        <button
+          className="ans_button"
+          type="button"
+          onClick={handleSubmit}
+          disabled={!answerEnabled}
+        >
           解　答
         </button>
       </div>
       <div className="prob-change-btn">
-        <button className="previous-btn" type="button" onClick={handlePrevious} disabled={currentQuestionIndex <= 0}>
+        <button
+          className="previous-btn"
+          type="button"
+          onClick={handlePrevious}
+          disabled={currentQuestionIndex <= 0}
+        >
           前の問題
         </button>
-        <button className="next-btn" type="button" onClick={handleNext} disabled={currentQuestionIndex >= questionCount - 1}>
+        <button
+          className="next-btn"
+          type="button"
+          onClick={handleNext}
+          disabled={currentQuestionIndex >= questionCount - 1}
+        >
           次の問題
         </button>
       </div>
