@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "../styles/quiz.css";
 import Image from "next/image";
 import TypingAnimation from "@/components/ui/typing-animation";
 import axios from "axios";
