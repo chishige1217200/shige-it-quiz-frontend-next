@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/quiz.css";
 import Image from "next/image";
 import TypingAnimation from "@/components/ui/typing-animation";
@@ -8,33 +8,31 @@ const App: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [questionCount, setQuestionCount] = useState<number>(0);
   const [question, setQuestion] = useState<string>("");
-  const [answer, setAnswer] = useState<string>();
+  const [answer, setAnswer] = useState<string>("");
   const [alternativeAnswers, setAlternativeAnswers] = useState<string[]>();
   const [answerEnabled, setAnswerEnabled] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string>("");
 
-  // 入力変更時のイベント
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-  };
-
-  // 次の質問に進む
+  // 次の問題に進む
   const handleNext = () => {
-    if (currentQuestionIndex < questionCount) {
+    if (currentQuestionIndex < questionCount - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 
-  // 前の質問に戻る
+  // 前の問題に戻る
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
 
-  // 解答を送信
+  // 解答を送信する
   const handleSubmit = () => {
-    alert(`Your answer: `);
+    alert(`あなたの解答: ${inputValue}`);
   };
 
+  // 問題数を取得する
   const fetchQuizCount = async () => {
     try {
       const response = await axios.get(
@@ -53,6 +51,7 @@ const App: React.FC = () => {
     }
   };
 
+  // 問題情報を取得する
   const fetchQuizData = async (id: string) => {
     try {
       setAnswerEnabled(false);
@@ -105,7 +104,9 @@ const App: React.FC = () => {
         type="text"
         className="input-area"
         placeholder="回答を入力してください"
+        value={inputValue}
         disabled={!answerEnabled}
+        onChange={(e) => setInputValue(e.target.value)}
       />
 
       <div>
@@ -114,10 +115,10 @@ const App: React.FC = () => {
         </button>
       </div>
       <div className="prob-change-btn">
-        <button className="previous-btn" type="button" onClick={handlePrevious}>
+        <button className="previous-btn" type="button" onClick={handlePrevious} disabled={currentQuestionIndex <= 0}>
           前の問題
         </button>
-        <button className="next-btn" type="button" onClick={handleNext}>
+        <button className="next-btn" type="button" onClick={handleNext} disabled={currentQuestionIndex >= questionCount - 1}>
           次の問題
         </button>
       </div>

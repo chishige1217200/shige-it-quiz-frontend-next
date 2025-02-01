@@ -124,10 +124,9 @@ button:hover {
 
 button:disabled {
   background-color: #ccc;
-  transform: none; /* disabled状態でhoverの影響を防ぐ */
 }
 
 button:disabled:hover {
-  transform: none; /* hoverのscaleを無効化 */
+  scale: none; /* ホバー時のアニメーションを無効化 */
   cursor: not-allowed; /* ユーザーにクリック不可であることを視覚的に示す */
 }
