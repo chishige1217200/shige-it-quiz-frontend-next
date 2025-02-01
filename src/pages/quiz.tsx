@@ -3,33 +3,17 @@ import "../styles/quiz.css";
 import Image from "next/image";
 import TypingAnimation from "@/components/ui/typing-animation";
 import axios from "axios";
-import { count } from "console";
-
-// クイズデータの型定義
-interface Quiz {
-  id: number;
-  question: string;
-}
-
-const quizData: Quiz[] = [
-  { id: 1, question: "What is the capital of France?" },
-  { id: 2, question: "What is 2 + 2?" },
-  { id: 3, question: "What is the capital of Japan?" },
-];
 
 const App: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [questionCount, setQuestionCount] = useState<number>(0);
   const [question, setQuestion] = useState<string>("");
-  const [answers, setAnswers] = useState<string[]>(
-    Array(quizData.length).fill("")
-  );
+  const [answer, setAnswer] = useState<string>();
+  const [alternativeAnswers, setAlternativeAnswers] = useState<string[]>();
+  const [answerEnabled, setAnswerEnabled] = useState<boolean>(false);
 
   // 入力変更時のイベント
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestionIndex] = e.target.value;
-    setAnswers(newAnswers);
   };
 
   // 次の質問に進む
@@ -48,7 +32,7 @@ const App: React.FC = () => {
 
   // 解答を送信
   const handleSubmit = () => {
-    alert(`Your answer: ${answers[currentQuestionIndex]}`);
+    alert(`Your answer: `);
   };
 
   const fetchQuizCount = async () => {
@@ -71,6 +55,7 @@ const App: React.FC = () => {
 
   const fetchQuizData = async (id: string) => {
     try {
+      setAnswerEnabled(false);
       const response = await axios.get(
         `https://shige-it-quiz-backend.vercel.app/get_quizdata?id=${currentQuestionIndex}`
       );
@@ -81,6 +66,7 @@ const App: React.FC = () => {
       if (data.question) {
         // 問題情報を状態として保存
         setQuestion(`Q${id}: ` + data.question);
+        setAnswerEnabled(true);
       } else {
         setQuestion(`Q${id}: 問題情報が存在しません。`);
       }
@@ -119,10 +105,11 @@ const App: React.FC = () => {
         type="text"
         className="input-area"
         placeholder="回答を入力してください"
+        disabled={!answerEnabled}
       />
 
       <div>
-        <button className="ans_button" type="button" onClick={handleSubmit}>
+        <button className="ans_button" type="button" onClick={handleSubmit} disabled={!answerEnabled}>
           解　答
         </button>
       </div>
