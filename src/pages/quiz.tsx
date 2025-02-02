@@ -30,7 +30,8 @@ const App: React.FC = () => {
   };
 
   // 解答を送信する
-  const handleSubmit = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (answer === inputValue) {
       showFrame();
       if (currentQuestionIndex < questionCount - 1) {
@@ -167,25 +168,26 @@ const App: React.FC = () => {
         </TypingAnimation>
       </div>
 
-      <input
-        type="text"
-        className="input-area"
-        placeholder="回答を入力してください"
-        value={inputValue}
-        disabled={!answerEnabled}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-
-      <div>
-        <button
-          className="ans_button"
-          type="button"
-          onClick={handleSubmit}
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          className="input-area"
+          placeholder="回答を入力してください"
+          value={inputValue}
           disabled={!answerEnabled}
-        >
-          解　答
-        </button>
-      </div>
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+
+        <div>
+          <button
+            className="ans_button"
+            type="submit"
+            disabled={!answerEnabled}
+          >
+            解　答
+          </button>
+        </div>
+      </form>
       <div className="prob-change-btn">
         <button
           className="previous-btn"
