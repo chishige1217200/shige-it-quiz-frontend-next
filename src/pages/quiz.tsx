@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import TypingAnimation from "@/components/ui/typing-animation";
 import axios from "axios";
 
@@ -11,6 +12,7 @@ const App: React.FC = () => {
   const [alternativeAnswers, setAlternativeAnswers] = useState<string[]>();
   const [answerEnabled, setAnswerEnabled] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
+  const router = useRouter();
 
   // 次の問題に進む
   const handleNext = () => {
@@ -89,6 +91,20 @@ const App: React.FC = () => {
   useEffect(() => {
     fetchQuizCount();
   }, []);
+
+  useEffect(() => {
+    if (!router.isReady) return; // ルーターの準備ができていない場合は処理しない
+
+    const { id } = router.query;
+    if (!id) {
+      return;
+    }
+    if (Array.isArray(id) || isNaN(Number(id))) {
+      return;
+    }
+
+    setCurrentQuestionIndex(Number(id));
+  }, [router.isReady, router.query.id]);
 
   useEffect(() => {
     fetchQuizData(currentQuestionIndex.toString());
