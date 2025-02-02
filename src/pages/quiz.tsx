@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import TypingAnimation from "@/components/ui/typing-animation";
 import axios from "axios";
+import confetti from "canvas-confetti";
 
 const App: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -17,7 +18,6 @@ const App: React.FC = () => {
   // 次の問題に進む
   const handleNext = () => {
     if (currentQuestionIndex < questionCount - 1) {
-      setInputValue("");
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
@@ -25,7 +25,6 @@ const App: React.FC = () => {
   // 前の問題に戻る
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
-      setInputValue("");
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
@@ -33,14 +32,50 @@ const App: React.FC = () => {
   // 解答を送信する
   const handleSubmit = () => {
     if (answer === inputValue) {
-      alert("answerで正解!");
+      showFrame();
+      if (currentQuestionIndex < questionCount - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      }
       return;
     }
     if (alternativeAnswers?.includes(inputValue)) {
-      alert("alternativeAnswersで正解!");
+      showFrame();
+      if (currentQuestionIndex < questionCount - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      }
       return;
     }
     alert("不正解...");
+  };
+
+  const showFrame = () => {
+    const end = Date.now() + 1 * 1000; // 1 seconds
+    const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
+
+    const frame = () => {
+      if (Date.now() > end) return;
+
+      confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 0, y: 0.5 },
+        colors: colors,
+      });
+      confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 1, y: 0.5 },
+        colors: colors,
+      });
+
+      requestAnimationFrame(frame);
+    };
+
+    frame();
   };
 
   // 問題数を取得する
@@ -66,6 +101,7 @@ const App: React.FC = () => {
   const fetchQuizData = async (id: string) => {
     try {
       setQuestion("");
+      setInputValue("");
       setAnswerEnabled(false);
       const response = await axios.get(
         `https://shige-it-quiz-backend.vercel.app/get_quizdata?id=${currentQuestionIndex}`
@@ -96,6 +132,9 @@ const App: React.FC = () => {
     if (!router.isReady) return; // ルーターの準備ができていない場合は処理しない
 
     const { id } = router.query;
+
+    console.log(id);
+
     if (!id) {
       return;
     }
