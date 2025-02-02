@@ -17,7 +17,6 @@ const App: React.FC = () => {
   // 次の問題に進む
   const handleNext = () => {
     if (currentQuestionIndex < questionCount - 1) {
-      setInputValue("");
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
@@ -25,7 +24,6 @@ const App: React.FC = () => {
   // 前の問題に戻る
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
-      setInputValue("");
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
@@ -34,10 +32,16 @@ const App: React.FC = () => {
   const handleSubmit = () => {
     if (answer === inputValue) {
       alert("answerで正解!");
+      if (currentQuestionIndex < questionCount - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      }
       return;
     }
     if (alternativeAnswers?.includes(inputValue)) {
       alert("alternativeAnswersで正解!");
+      if (currentQuestionIndex < questionCount - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      }
       return;
     }
     alert("不正解...");
@@ -66,6 +70,7 @@ const App: React.FC = () => {
   const fetchQuizData = async (id: string) => {
     try {
       setQuestion("");
+      setInputValue("");
       setAnswerEnabled(false);
       const response = await axios.get(
         `https://shige-it-quiz-backend.vercel.app/get_quizdata?id=${currentQuestionIndex}`
@@ -96,6 +101,9 @@ const App: React.FC = () => {
     if (!router.isReady) return; // ルーターの準備ができていない場合は処理しない
 
     const { id } = router.query;
+
+    console.log(id);
+
     if (!id) {
       return;
     }
