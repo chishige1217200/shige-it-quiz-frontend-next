@@ -10,7 +10,9 @@ interface quizProps {
 }
 
 const App: React.FC<quizProps> = ({ id, count }: quizProps) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(id % count);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(
+    count !== 0 ? id % count : 0
+  );
   const [question, setQuestion] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
   const [alternativeAnswers, setAlternativeAnswers] = useState<string[]>();
