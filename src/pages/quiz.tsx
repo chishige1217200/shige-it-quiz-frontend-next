@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import TypingAnimation from "@/components/ui/typing-animation";
 import axios from "axios";
 import confetti from "canvas-confetti";
 
-const App: React.FC = () => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const [questionCount, setQuestionCount] = useState<number>(0);
+interface quizProps {
+  id: number;
+  count: number;
+}
+
+const App: React.FC<quizProps> = ({ id, count }: quizProps) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(
+    count !== 0 ? id % count : 0
+  );
   const [question, setQuestion] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
   const [alternativeAnswers, setAlternativeAnswers] = useState<string[]>();
   const [answerEnabled, setAnswerEnabled] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
-  const router = useRouter();
 
   // 次の問題に進む
   const handleNext = () => {
-    if (currentQuestionIndex < questionCount - 1) {
+    if (currentQuestionIndex < count - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
@@ -34,14 +38,14 @@ const App: React.FC = () => {
     event.preventDefault();
     if (answer === inputValue) {
       showFrame();
-      if (currentQuestionIndex < questionCount - 1) {
+      if (currentQuestionIndex < count - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       }
       return;
     }
     if (alternativeAnswers?.includes(inputValue)) {
       showFrame();
-      if (currentQuestionIndex < questionCount - 1) {
+      if (currentQuestionIndex < count - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       }
       return;
@@ -79,25 +83,6 @@ const App: React.FC = () => {
     frame();
   };
 
-  // 問題数を取得する
-  const fetchQuizCount = async () => {
-    try {
-      const response = await axios.get(
-        `https://shige-it-quiz-backend.vercel.app/get_quizcount`
-      );
-      const data = response.data;
-
-      // console.log(data);
-
-      if (data.count) {
-        // 問題数情報を状態として保存
-        setQuestionCount(data.count);
-      }
-    } catch (error) {
-      console.error("Error fetching questionCount:", error);
-    }
-  };
-
   // 問題情報を取得する
   const fetchQuizData = async (id: string) => {
     try {
@@ -124,27 +109,6 @@ const App: React.FC = () => {
       console.error("Error fetching question:", error);
     }
   };
-
-  useEffect(() => {
-    fetchQuizCount();
-  }, []);
-
-  useEffect(() => {
-    if (!router.isReady) return; // ルーターの準備ができていない場合は処理しない
-
-    const { id } = router.query;
-
-    console.log(id);
-
-    if (!id) {
-      return;
-    }
-    if (Array.isArray(id) || isNaN(Number(id))) {
-      return;
-    }
-
-    setCurrentQuestionIndex(Number(id));
-  }, [router.isReady, router.query.id]);
 
   useEffect(() => {
     fetchQuizData(currentQuestionIndex.toString());
@@ -201,7 +165,7 @@ const App: React.FC = () => {
           className="next-btn"
           type="button"
           onClick={handleNext}
-          disabled={currentQuestionIndex >= questionCount - 1}
+          disabled={currentQuestionIndex >= count - 1}
         >
           次の問題
         </button>

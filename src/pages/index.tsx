@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import Quiz from "./quiz";
+import QuizContainer from "./quizContainer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,7 +61,7 @@ export default function Home() {
             Read our docs
           </a>
         </div> */}
-        <Quiz />
+        <QuizContainer />
       </main>
       {/* <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <a
